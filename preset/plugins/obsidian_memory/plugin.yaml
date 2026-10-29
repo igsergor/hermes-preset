@@ -1,0 +1,7 @@
+name: obsidian-memory
+version: 0.1.0
+description: "Obsidian Memory — local markdown fact store with auto-extraction, dedup, and optional semantic search. Facts live as .md files with YAML frontmatter in an Obsidian vault."
+pip_dependencies: []
+hooks:
+  - on_session_end
+  - on_memory_write

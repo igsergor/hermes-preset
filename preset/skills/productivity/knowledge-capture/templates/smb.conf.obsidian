@@ -1,0 +1,53 @@
+[global]
+   workgroup = WORKGROUP
+   server string = Hermes Server
+   netbios name = HERMES-SERVER
+   security = user
+   map to guest = bad user
+   dns proxy = no
+   bind interfaces only = yes
+   interfaces = lo enp1s0
+   log file = /var/log/samba/log.%m
+   max log size = 1000
+   logging = file
+   panic action = /usr/share/samba/panic-action %d
+   
+   # Performance
+   socket options = TCP_NODELAY IPTOS_LOWDELAY SO_RCVBUF=8192 SO_SNDBUF=8192
+   read raw = yes
+   write raw = yes
+   max xmit = 65535
+   dead time = 15
+   getwd cache = yes
+   
+   # VFS modules for better macOS/Windows compatibility
+   vfs objects = catia fruit streams_xattr
+   fruit:metadata = stream
+   fruit:model = MacSamba
+   fruit:posix_rename = yes
+   fruit:veto_appledouble = no
+   fruit:wipe_intentionally_left_blank_rfork = yes
+   fruit:delete_empty_adfiles = yes
+
+[obsidian-vault]
+   path = /home/igor/obsidian-vault
+   browseable = yes
+   read only = no
+   guest ok = no
+   create mask = 0664
+   directory mask = 0775
+   force create mode = 0664
+   force directory mode = 0775
+   valid users = igor
+   write list = igor
+   # File locking for concurrent access
+   oplocks = yes
+   level2 oplocks = yes
+   locking = yes
+   # Case sensitivity
+   preserve case = yes
+   short preserve case = yes
+   case sensitive = no
+   # Veto files that could cause issues
+   veto files = /._*/.DS_Store/.Trashes/Thumbs.db/~*/
+   delete veto files = yes

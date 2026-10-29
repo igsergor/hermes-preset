@@ -1,0 +1,23 @@
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.venv/
+venv/
+
+# Legacy dead code — the old Qdrant/embeddings path, imported by nothing.
+# Kept on disk for reference only, deliberately NOT part of the source tree.
+embeddings.py
+
+# Local runtime artifacts — never part of the source
+*.db
+*.db-wal
+*.db-shm
+*.so
+!_vendor/sqlite_vec/vec0.so
+
+.DS_Store
+
+# pipeline bytecode
+pipeline/__pycache__/
+*.bak-*

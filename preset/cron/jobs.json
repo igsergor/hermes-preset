@@ -1,0 +1,119 @@
+{
+ "jobs": [
+  {
+   "id": "7c1a90f4b2de",
+   "name": "Ночной разбор сессий в память",
+   "prompt": "Просмотри сессии за последние сутки (state.db, таблица sessions) и сохрани в память только то, что имеет долгую ценность: устойчивые предпочтения пользователя, решения, договорённости, факты об окружении. Не сохраняй разовые детали и пересказ разговора. Дубликаты не создавай. Если сохранять нечего — заверши без записи.",
+   "skills": [],
+   "skill": null,
+   "script": null,
+   "no_agent": false,
+   "context_from": null,
+   "schedule": {
+    "kind": "cron",
+    "expr": "0 2 * * *",
+    "display": "0 2 * * *"
+   },
+   "schedule_display": "0 2 * * *",
+   "repeat": {
+    "times": null,
+    "completed": 0
+   },
+   "enabled": true,
+   "state": "scheduled",
+   "paused_at": null,
+   "paused_reason": null,
+   "created_at": "2026-10-28T22:54:58.141352+04:00",
+   "next_run_at": null,
+   "last_run_at": null,
+   "last_status": null,
+   "last_error": null,
+   "last_delivery_error": null,
+   "deliver": "local",
+   "origin": null,
+   "enabled_toolsets": null,
+   "workdir": null,
+   "profile": null,
+   "fire_claim": null,
+   "last_dispatch": null,
+   "failure_streak": 0
+  },
+  {
+   "id": "3f5e21ac9d07",
+   "name": "Переиндексация волта",
+   "prompt": "Перестрой векторный индекс волта: запусти python3 /opt/data/plugins/obsidian_memory/pipeline/vault_vector_index.py (OBSIDIAN_VAULT=/opt/data/vault, VAULT_VECTORS_DB=/opt/data/vault_vectors.db) и коротко отчитайся числом проиндексированных заметок и ошибок. Если скрипт недоступен — напиши об этом одной строкой.",
+   "skills": [],
+   "skill": null,
+   "script": null,
+   "no_agent": false,
+   "context_from": null,
+   "schedule": {
+    "kind": "cron",
+    "expr": "30 3 * * *",
+    "display": "30 3 * * *"
+   },
+   "schedule_display": "30 3 * * *",
+   "repeat": {
+    "times": null,
+    "completed": 0
+   },
+   "enabled": true,
+   "state": "scheduled",
+   "paused_at": null,
+   "paused_reason": null,
+   "created_at": "2026-10-28T22:54:58.141352+04:00",
+   "next_run_at": null,
+   "last_run_at": null,
+   "last_status": null,
+   "last_error": null,
+   "last_delivery_error": null,
+   "deliver": "local",
+   "origin": null,
+   "enabled_toolsets": null,
+   "workdir": null,
+   "profile": null,
+   "fire_claim": null,
+   "last_dispatch": null,
+   "failure_streak": 0
+  },
+  {
+   "id": "b84d02e6a1c5",
+   "name": "Недельный обзор",
+   "prompt": "Сделай недельный обзор: что обсуждалось, какие задачи остались незакрытыми, что стоит сделать на следующей неделе. Источники — сессии за 7 дней и заметки волта. Коротко, списком, без воды.",
+   "skills": [],
+   "skill": null,
+   "script": null,
+   "no_agent": false,
+   "context_from": null,
+   "schedule": {
+    "kind": "cron",
+    "expr": "0 11 * * 1",
+    "display": "0 11 * * 1"
+   },
+   "schedule_display": "0 11 * * 1",
+   "repeat": {
+    "times": null,
+    "completed": 0
+   },
+   "enabled": true,
+   "state": "scheduled",
+   "paused_at": null,
+   "paused_reason": null,
+   "created_at": "2026-10-28T22:54:58.141352+04:00",
+   "next_run_at": null,
+   "last_run_at": null,
+   "last_status": null,
+   "last_error": null,
+   "last_delivery_error": null,
+   "deliver": "local",
+   "origin": null,
+   "enabled_toolsets": null,
+   "workdir": null,
+   "profile": null,
+   "fire_claim": null,
+   "last_dispatch": null,
+   "failure_streak": 0
+  }
+ ],
+ "updated_at": "2026-10-28T22:54:58.141352+04:00"
+}

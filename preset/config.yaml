@@ -1,0 +1,71 @@
+# Hermes Agent — preset configuration
+# Всё, что здесь есть, работает без единого ключа. Модель подключается
+# в дашборде (http://localhost:9119) при первом запуске.
+
+agent:
+  max_turns: 80
+
+model:
+  # Пусто до подключения провайдера: /api/model/set в дашборде заполняет
+  # default/provider/base_url. Кроны без ключа получают понятную ошибку
+  # ProviderNotConfiguredError и ждут ключ, без спама (доставка local).
+  default: ""
+  provider: ""
+  base_url: ""
+
+memory:
+  memory_enabled: true
+  user_profile_enabled: true
+  memory_char_limit: 2200
+  user_char_limit: 1375
+  nudge_interval: 10
+  flush_min_turns: 6
+  provider: obsidian_memory
+
+plugins:
+  load_timeout_seconds: 60
+  enabled:
+    - obsidian-memory
+  obsidian-memory:
+    vault_path: /opt/data/vault
+    auto_extract: false
+    default_trust: 0.5
+    min_trust: 0.3
+    prefetch_top: 5
+    prefetch_fresh_wait: 5.0
+    prefetch_queue_max: 24
+    prefetch_emergency_depth: 6
+    prefetch_emergency_age: 180.0
+  disabled: []
+
+# Подтверждения включены: агент спрашивает перед удалением, правкой файлов
+# и произвольными командами. off — только для тех, кто понимает риск.
+approvals:
+  mode: smart
+  timeout: 300
+  cron_mode: deny
+  single_query_mode: deny
+  unattended_mode: deny
+  destructive_slash_confirm: true
+
+security:
+  redact_secrets: true
+  allow_private_urls: false
+
+dashboard:
+  # Пустой basic_auth = доступ без пароля, но только на 127.0.0.1.
+  # Наружу дашборд не выставляется.
+  basic_auth:
+    username: ""
+    password: ""
+    password_hash: ""
+    secret: ""
+    session_ttl_seconds: 0
+
+updates:
+  pre_update_backup: true
+  backup_keep: 5
+
+gateway:
+  trust_recent_files: true
+  trust_recent_files_seconds: 600

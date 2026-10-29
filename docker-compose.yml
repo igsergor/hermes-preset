@@ -1,0 +1,16 @@
+services:
+  hermes:
+    image: ghcr.io/igsergor/hermes-preset:latest
+    container_name: hermes
+    restart: unless-stopped
+    # Порт публикуется только на loopback: дашборд недоступен из сети.
+    ports:
+      - "127.0.0.1:9119:9119"
+    volumes:
+      - hermes-data:/opt/data
+    environment:
+      - TZ=UTC
+    command: ["gateway", "run"]
+
+volumes:
+  hermes-data:
