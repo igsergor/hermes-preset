@@ -1,4 +1,5 @@
 @echo off
+chcp 65001 >nul
 setlocal
 set IMAGE=ghcr.io/igsergor/hermes-preset:latest
 set NAME=hermes
@@ -6,6 +7,17 @@ set NAME=hermes
 where docker >nul 2>nul
 if errorlevel 1 (
   echo Docker не найден. Установи Docker Desktop: https://www.docker.com/products/docker-desktop/
+  pause
+  exit /b 1
+)
+
+
+rem Проверка режима Linux-контейнеров
+set "OSTYPE="
+for /f "usebackq delims=" %%i in (`docker info --format "{{.OSType}}" 2^>nul`) do set "OSTYPE=%%i"
+if /i not "%OSTYPE%"=="linux" (
+  echo Docker Desktop сейчас в режиме Windows-контейнеров.
+  echo Правый клик по иконке кита в трее -^> "Switch to Linux containers", затем запусти этот файл снова.
   pause
   exit /b 1
 )

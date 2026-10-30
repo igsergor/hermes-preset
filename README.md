@@ -6,6 +6,8 @@
 
 ## Что нужно
 
+Пошаговая установка для Windows 10/11 — в файле [INSTALL-WINDOWS.md](INSTALL-WINDOWS.md).
+
 - Docker Desktop (Windows, macOS) или Docker Engine (Linux)
 - 8 ГБ RAM минимум, лучше 16
 - ~10 ГБ свободного места на диске
