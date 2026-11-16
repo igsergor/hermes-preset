@@ -1,0 +1,32 @@
+services:
+  hermes-iso:
+    image: ghcr.io/igsergor/hermes-preset:latest
+    container_name: hermes-iso
+    command: ["gateway", "run"]
+    restart: unless-stopped
+
+    # Ресурсы: второй экземпляр не должен мешать первому
+    cpus: 2
+    mem_limit: 3g
+    memswap_limit: 3g
+    pids_limit: 256
+
+    # Права: забираем всё, возвращаем только то, без чего s6 не стартует
+    cap_drop: [ALL]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID, KILL, MKNOD]
+    security_opt:
+      - no-new-privileges:true
+
+    # Дашборд только на loopback; снаружи — ssh -L 9129:127.0.0.1:9129
+    # Порт 9119 обычно занят первым Hermes, поэтому по умолчанию 9129
+    ports:
+      - "127.0.0.1:${DASH_PORT:-9129}:9119"
+
+    volumes:
+      # Всё состояние — в томе; хост-ФС не монтируется
+      - hermes-iso-data:/opt/data
+      # Единственная папка на шаре. Именно подпапка, не весь MyFiles.
+      - ${SHARE_DIR:-/mnt/myfiles/igser/hermes-share}:/share:rw
+
+volumes:
+  hermes-iso-data:
