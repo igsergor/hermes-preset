@@ -13,7 +13,7 @@ services:
 
     # Права: забираем всё, возвращаем только то, без чего s6 не стартует
     cap_drop: [ALL]
-    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID, KILL, MKNOD]
+    cap_add: [CHOWN, DAC_OVERRIDE, FOWNER, SETGID, SETUID, KILL]
     security_opt:
       - no-new-privileges:true
 

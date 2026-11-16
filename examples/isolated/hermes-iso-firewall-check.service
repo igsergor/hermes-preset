@@ -1,0 +1,8 @@
+[Unit]
+Description=Hermes isolated container: verify LAN/docker isolation rules every 5 min
+After=docker.service
+Requires=docker.service
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/hermes-iso-firewall check
