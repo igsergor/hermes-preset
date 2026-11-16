@@ -1,0 +1,22 @@
+[Unit]
+Description=Hermes isolated container: block LAN/docker networks
+After=docker.service network-online.target
+Requires=docker.service
+PartOf=docker.service
+
+[Service]
+Type=oneshot
+RemainAfterExit=yes
+ExecStart=/usr/local/sbin/hermes-iso-firewall apply
+ExecStop=/usr/local/sbin/hermes-iso-firewall remove
+
+[Install]
+WantedBy=multi-user.target
+
+# Установка:
+#   sudo install -m 755 firewall.sh /usr/local/sbin/hermes-iso-firewall
+#   sudo install -m 644 hermes-iso-firewall.service /etc/systemd/system/
+#   sudo systemctl daemon-reload && sudo systemctl enable --now hermes-iso-firewall
+#
+# Важно: без юнита правила живут до перезагрузки. После ребута контейнер
+# поднимется (restart: unless-stopped), а правила — нет, и LAN снова станет доступен.

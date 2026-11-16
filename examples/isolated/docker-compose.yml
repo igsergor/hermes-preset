@@ -28,5 +28,16 @@ services:
       # Единственная папка на шаре. Именно подпапка, не весь MyFiles.
       - ${SHARE_DIR:-/mnt/myfiles/igser/hermes-share}:/share:rw
 
+    networks:
+      - iso
+
+networks:
+  iso:
+    # Фиксированная подсеть: firewall.sh привязывает правила к ней, а не к IP
+    # контейнера, поэтому пересоздание контейнера их не ломает.
+    ipam:
+      config:
+        - subnet: 172.28.0.0/24
+
 volumes:
   hermes-iso-data:

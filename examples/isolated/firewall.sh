@@ -2,47 +2,41 @@
 # Закрывает изолированному контейнеру локальную сеть и docker-сети, оставляя интернет.
 #   ./firewall.sh apply
 #   ./firewall.sh remove
+#
+# Правила привязаны к ПОДСЕТИ docker-сети (172.28.0.0/24 из compose), а не к IP
+# контейнера: пересоздание контейнера и смена его адреса внутри подсети их не ломают.
 set -euo pipefail
 
-CONTAINER="${CONTAINER:-hermes-iso}"
+SUBNET="${SUBNET:-172.28.0.0/24}"
 CHAIN="HERMES-ISO"
 
 [ "$(id -u)" -eq 0 ] || { echo "нужен root: sudo $0 $*" >&2; exit 1; }
 
-ip_of() {
-  docker inspect "$CONTAINER" --format '{{range .NetworkSettings.Networks}}{{.IPAddress}} {{end}}' \
-    | tr ' ' '\n' | grep -E '^[0-9]+\.' | head -1
-}
-
 apply() {
-  local ip; ip=$(ip_of)
-  [ -n "$ip" ] || { echo "контейнер $CONTAINER не запущен" >&2; exit 1; }
+  # Трафик наружу: LAN, VPN-подсети, любые другие docker-сети
+  for d in 192.168.0.0/16 10.0.0.0/8 172.16.0.0/12; do
+    iptables -C DOCKER-USER -s "$SUBNET" -d "$d" -j DROP 2>/dev/null \
+      || iptables -I DOCKER-USER 1 -s "$SUBNET" -d "$d" -j DROP
+  done
 
-  # Трафик наружу: LAN, VPN-подсеть, другие docker-сети
-  iptables -I DOCKER-USER 1 -s "$ip" -d 192.168.0.0/16 -j DROP
-  iptables -I DOCKER-USER 1 -s "$ip" -d 10.0.0.0/8     -j DROP
-  iptables -I DOCKER-USER 1 -s "$ip" -d 172.16.0.0/12  -j DROP
-
-  # Трафик на сам хост (адреса bridge принадлежат хосту -> INPUT, не FORWARD)
+  # Трафик на сам хост. Адреса bridge (172.17.0.1/172.28.0.1) и LAN-адрес хоста
+  # (192.168.1.130) принадлежат хосту, поэтому в FORWARD не попадают — нужен INPUT.
+  # Без этих правил контейнер достаёт дашборд соседнего Hermes (:9119) и SSH (:22).
   iptables -N "$CHAIN" 2>/dev/null || true
-  iptables -C INPUT -s "$ip" -j "$CHAIN" 2>/dev/null || iptables -I INPUT 1 -s "$ip" -j "$CHAIN"
+  iptables -C INPUT -s "$SUBNET" -j "$CHAIN" 2>/dev/null || iptables -I INPUT 1 -s "$SUBNET" -j "$CHAIN"
   iptables -F "$CHAIN"
-  iptables -A "$CHAIN" -d 172.16.0.0/12 -j DROP
-  iptables -A "$CHAIN" -d 10.0.0.0/8    -j DROP
-  iptables -A "$CHAIN" -d 127.0.0.0/8   -j DROP
-  iptables -A "$CHAIN" -j RETURN
+  # Ответы на собственные исходящие соединения контейнера пропускаем, всё прочее — DROP
+  iptables -A "$CHAIN" -m conntrack --ctstate ESTABLISHED,RELATED -j RETURN
+  iptables -A "$CHAIN" -j DROP
 
-  echo "применено для $CONTAINER ($ip)"
+  echo "применено для подсети $SUBNET"
 }
 
 remove() {
-  local ip; ip=$(ip_of || true)
-  if [ -n "${ip:-}" ]; then
-    iptables -D DOCKER-USER -s "$ip" -d 192.168.0.0/16 -j DROP 2>/dev/null || true
-    iptables -D DOCKER-USER -s "$ip" -d 10.0.0.0/8     -j DROP 2>/dev/null || true
-    iptables -D DOCKER-USER -s "$ip" -d 172.16.0.0/12  -j DROP 2>/dev/null || true
-    iptables -D INPUT -s "$ip" -j "$CHAIN" 2>/dev/null || true
-  fi
+  for d in 192.168.0.0/16 10.0.0.0/8 172.16.0.0/12; do
+    iptables -D DOCKER-USER -s "$SUBNET" -d "$d" -j DROP 2>/dev/null || true
+  done
+  iptables -D INPUT -s "$SUBNET" -j "$CHAIN" 2>/dev/null || true
   iptables -F "$CHAIN" 2>/dev/null || true
   iptables -X "$CHAIN" 2>/dev/null || true
   echo "снято"
